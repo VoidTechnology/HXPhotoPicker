@@ -145,19 +145,20 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
         if scrollView.zoomScale > 1 {
             scrollView.setZoomScale(1, animated: true)
         }else {
-            let touchPoint = tap.location(in: scrollContentView)
-            let maximumZoomScale = scrollView.maximumZoomScale
-            let zoomWidth = width / maximumZoomScale
-            let zoomHeight = height / maximumZoomScale
-            scrollView.zoom(
-                to: CGRect(
-                    x: touchPoint.x - zoomWidth / 2,
-                    y: touchPoint.y - zoomHeight / 2,
-                    width: zoomWidth,
-                    height: zoomHeight
-                ),
-                animated: true
-            )
+            scrollView.setZoomScale(2, animated: true)
+//            let touchPoint = tap.location(in: scrollContentView)
+//            let maximumZoomScale = scrollView.maximumZoomScale
+//            let zoomWidth = width / maximumZoomScale
+//            let zoomHeight = height / maximumZoomScale
+//            scrollView.zoom(
+//                to: CGRect(
+//                    x: touchPoint.x - zoomWidth / 2,
+//                    y: touchPoint.y - zoomHeight / 2,
+//                    width: zoomWidth,
+//                    height: zoomHeight
+//                ),
+//                animated: true
+//            )
         }
     }
     @objc func longPressClick(longPress: UILongPressGestureRecognizer) {
