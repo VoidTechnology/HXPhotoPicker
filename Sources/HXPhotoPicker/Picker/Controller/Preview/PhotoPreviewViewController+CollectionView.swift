@@ -66,9 +66,9 @@ extension PhotoPreviewViewController: UICollectionViewDelegate {
     ) {
         let myCell = cell as! PhotoPreviewViewCell
         myCell.scrollContentView.startAnimated()
-        if myCell.photoAsset.mediaType == .video {
+//        if myCell.photoAsset.mediaType == .video {
             myCell.scrollView.zoomScale = 1
-        }
+//        }
         myCell.checkContentSize()
         pickerController.pickerDelegate?.pickerController(
             pickerController,
