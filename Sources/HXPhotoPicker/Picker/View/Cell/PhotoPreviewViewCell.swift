@@ -56,6 +56,7 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
         scrollView.showsVerticalScrollIndicator = false
         scrollView.bouncesZoom = true
         scrollView.minimumZoomScale = 1
+        scrollView.maximumZoomScale = 3
         scrollView.isMultipleTouchEnabled = true
         scrollView.scrollsToTop = false
         scrollView.delaysContentTouches = false
@@ -99,13 +100,16 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
         }
     }
     func setupPortraitContentSize() {
-        let aspectRatio = width / photoAsset.imageSize.width
+        let imageSize = photoAsset.imageSize
+        let aspectRatio = width / imageSize.width
         let contentWidth = width
-        let contentHeight = photoAsset.imageSize.height * aspectRatio
-        if contentWidth < contentHeight {
-            scrollView.maximumZoomScale = width * 2.5 / contentWidth
-        }else {
-            scrollView.maximumZoomScale = height * 2.5 / contentHeight
+        let contentHeight = imageSize.height * aspectRatio
+        if imageSize.width >= imageSize.height * 2 {
+            let showHeight = imageSize.height / imageSize.width * width
+            let maximumZoomScale = height / showHeight
+            scrollView.maximumZoomScale = maximumZoomScale
+        } else {
+            scrollView.maximumZoomScale = 3
         }
         scrollContentView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
         if contentHeight < height {
@@ -116,21 +120,27 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
         }
     }
     func setupLandscapeContentSize() {
-        let aspectRatio = height / photoAsset.imageSize.height
-        var contentWidth = photoAsset.imageSize.width * aspectRatio
+        let imageSize = photoAsset.imageSize
+        let aspectRatio = height / imageSize.height
+        var contentWidth = imageSize.width * aspectRatio
         var contentHeight = height
         if contentWidth > width {
             contentHeight = width / contentWidth * contentHeight
             contentWidth = width
-            scrollView.maximumZoomScale = height / contentHeight + 0.5
             scrollContentView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
             scrollView.contentSize = scrollContentView.size
         }else {
-            scrollView.maximumZoomScale = width / contentWidth + 0.5
             scrollContentView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
             scrollView.contentSize = size
         }
         scrollContentView.center = CGPoint(x: width * 0.5, y: height * 0.5)
+        if imageSize.width >= imageSize.height * 2 {
+            let showHeight = imageSize.height / imageSize.width * width
+            let maximumZoomScale = height / showHeight
+            scrollView.maximumZoomScale = maximumZoomScale
+        } else {
+            scrollView.maximumZoomScale = 3
+        }
     }
     func requestPreviewAsset() {
         scrollContentView.requestPreviewAsset()
@@ -143,22 +153,46 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
     }
     @objc func doubleTap(tap: UITapGestureRecognizer) {
         if scrollView.zoomScale > 1 {
+            scrollView.maximumZoomScale = 3
             scrollView.setZoomScale(1, animated: true)
         }else {
-            scrollView.setZoomScale(2, animated: true)
-//            let touchPoint = tap.location(in: scrollContentView)
-//            let maximumZoomScale = scrollView.maximumZoomScale
-//            let zoomWidth = width / maximumZoomScale
-//            let zoomHeight = height / maximumZoomScale
-//            scrollView.zoom(
-//                to: CGRect(
-//                    x: touchPoint.x - zoomWidth / 2,
-//                    y: touchPoint.y - zoomHeight / 2,
-//                    width: zoomWidth,
-//                    height: zoomHeight
-//                ),
-//                animated: true
-//            )
+            let imageSize = photoAsset.imageSize
+            if imageSize.width >= imageSize.height * 2 {
+                // 横长图：放大高度 = cell高度
+                // 初始显示高度
+                let showHeight = imageSize.height / imageSize.width * width
+                // 放大倍数
+                let maximumZoomScale = height / showHeight
+                scrollView.maximumZoomScale = maximumZoomScale
+                let touchPoint = tap.location(in: scrollContentView)
+                let zoomWidth = width / maximumZoomScale
+                let zoomHeight = height / maximumZoomScale
+                scrollView.zoom(
+                    to: CGRect(
+                        x: touchPoint.x - zoomWidth / 2,
+                        y: touchPoint.y - zoomHeight / 2,
+                        width: zoomWidth,
+                        height: zoomHeight
+                    ),
+                    animated: true
+                )
+            } else {
+                // 放大倍数
+                scrollView.maximumZoomScale = 3
+                let maximumZoomScale: CGFloat = 2
+                let touchPoint = tap.location(in: scrollContentView)
+                let zoomWidth = width / maximumZoomScale
+                let zoomHeight = height / maximumZoomScale
+                scrollView.zoom(
+                    to: CGRect(
+                        x: touchPoint.x - zoomWidth / 2,
+                        y: touchPoint.y - zoomHeight / 2,
+                        width: zoomWidth,
+                        height: zoomHeight
+                    ),
+                    animated: true
+                )
+            }
         }
     }
     @objc func longPressClick(longPress: UILongPressGestureRecognizer) {
