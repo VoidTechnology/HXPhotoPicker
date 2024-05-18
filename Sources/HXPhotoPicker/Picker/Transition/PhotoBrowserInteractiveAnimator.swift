@@ -128,6 +128,7 @@ public class PhotoBrowserInteractiveAnimator: PhotoBrowserInteractiveTransition,
            let contentView = cell.scrollContainerView {
             let toRect = contentView.convert(contentView.bounds, to: cell.scrollView)
             if  (cell.scrollView.isZooming ||
+                 cell.scrollView.zoomScale != 1 ||
                     cell.scrollView.isZoomBouncing ||
                     cell.scrollView.contentOffset.y > 0 ||
                     !cell.allowInteration ||
