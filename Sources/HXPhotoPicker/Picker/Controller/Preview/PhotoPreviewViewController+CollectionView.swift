@@ -11,7 +11,8 @@ import UIKit
 extension PhotoPreviewViewController: UICollectionViewDataSource {
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        assetCount
+        collectionView.isScrollEnabled = assetCount > 1
+        return assetCount
     }
     
     public func collectionView(
