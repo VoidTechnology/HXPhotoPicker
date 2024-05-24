@@ -109,8 +109,13 @@ open class PhotoBrowserAnimator: NSObject, PhotoBrowserAnimationTransitioning {
                     toViewSize: toVC.view.size,
                     directions: [.horizontal]
                 )
-            }else {
+            } else {
                 toRect = PhotoTools.transformImageSize(photoAsset.imageSize, to: toVC.view)
+                if photoAsset.isVerticalLongPicture {
+                    toRect.size.width = toRect.width * 0.5
+                    toRect.size.height = toRect.height * 0.5
+                    toRect.origin.x = toRect.width * 0.5
+                }
             }
         }
         if let photoBrowser = toVC as? PhotoBrowser {

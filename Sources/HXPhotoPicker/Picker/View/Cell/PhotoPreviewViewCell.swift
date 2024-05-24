@@ -102,22 +102,41 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
     func setupPortraitContentSize() {
         let imageSize = photoAsset.imageSize
         let aspectRatio = width / imageSize.width
-        let contentWidth = width
-        let contentHeight = imageSize.height * aspectRatio
-        if imageSize.width >= imageSize.height * 2 {
+        var contentWidth: CGFloat
+        var contentHeight: CGFloat
+        var scrollContentView_x: CGFloat
+        var scrollContentView_y: CGFloat
+        if photoAsset.isHorizontalLongPicture {
             let showHeight = imageSize.height / imageSize.width * width
             let maximumZoomScale = height / showHeight
             scrollView.maximumZoomScale = maximumZoomScale
+            contentWidth = width
+            contentHeight = imageSize.height * aspectRatio
+            scrollContentView_x = 0
+            scrollContentView_y = (height - contentHeight) * 0.5
+        } else if photoAsset.isVerticalLongPicture {
+            scrollView.maximumZoomScale = 3
+            contentWidth = width * 0.5
+            contentHeight = imageSize.height * aspectRatio * 0.5
+            scrollContentView_x = (width - contentWidth) * 0.5
+            scrollContentView_y = 0
         } else {
             scrollView.maximumZoomScale = 3
+            contentWidth = width
+            contentHeight = imageSize.height * aspectRatio
+            scrollContentView_x = 0
+            scrollContentView_y = (height - contentHeight) * 0.5
         }
-        scrollContentView.frame = CGRect(x: 0, y: 0, width: contentWidth, height: contentHeight)
-        if contentHeight < height {
-            scrollView.contentSize = size
-            scrollContentView.center = CGPoint(x: width * 0.5, y: height * 0.5)
-        }else {
-            scrollView.contentSize = CGSize(width: contentWidth, height: contentHeight)
-        }
+        scrollContentView.frame = CGRect(
+            x: scrollContentView_x,
+            y: scrollContentView_y,
+            width: contentWidth,
+            height: contentHeight
+        )
+        scrollView.contentSize = CGSize(
+            width: max(contentWidth, width),
+            height: max(contentHeight, height)
+        )
     }
     func setupLandscapeContentSize() {
         let imageSize = photoAsset.imageSize

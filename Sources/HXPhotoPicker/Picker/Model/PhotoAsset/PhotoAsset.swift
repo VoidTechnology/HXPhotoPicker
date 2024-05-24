@@ -77,6 +77,23 @@ open class PhotoAsset: Equatable {
         return .init(width: 200, height: 200)
     }
     
+    /// 横长图
+    public var isHorizontalLongPicture: Bool {
+        guard imageSize.width > 0, imageSize.height > 0 else { return false }
+        return imageSize.width >= imageSize.height * 2
+    }
+    
+    /// 竖长图
+    public var isVerticalLongPicture: Bool {
+        guard imageSize.width > 0, imageSize.height > 0 else { return false }
+        return imageSize.height >= imageSize.width * 2
+    }
+    
+    /// 长图
+    public var isLongPicture: Bool {
+        return isHorizontalLongPicture || isVerticalLongPicture
+    }
+    
     /// 视频时长 格式：00:00
     public var videoTime: String? {
         #if HXPICKER_ENABLE_EDITOR
