@@ -116,10 +116,17 @@ open class PhotoPreviewViewCell: UICollectionViewCell, UIScrollViewDelegate {
             scrollContentView_y = (height - contentHeight) * 0.5
         } else if photoAsset.isVerticalLongPicture {
             scrollView.maximumZoomScale = 3
-            contentWidth = width * 0.5
-            contentHeight = imageSize.height * aspectRatio * 0.5
-            scrollContentView_x = (width - contentWidth) * 0.5
-            scrollContentView_y = 0
+            if imageSize.height * aspectRatio <= height {
+                contentWidth = width
+                contentHeight = imageSize.height * aspectRatio
+                scrollContentView_x = 0
+                scrollContentView_y = (height - contentHeight) * 0.5
+            } else {
+                contentWidth = width * 0.5
+                contentHeight = imageSize.height * aspectRatio * 0.5
+                scrollContentView_x = (width - contentWidth) * 0.5
+                scrollContentView_y = 0
+            }
         } else {
             scrollView.maximumZoomScale = 3
             contentWidth = width
